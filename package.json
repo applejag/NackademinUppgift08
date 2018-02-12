@@ -1,15 +1,22 @@
 {
-  "name": "five-in-a-row",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "Kalle Jillheden",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.16.2"
-  }
+	"name": "five-in-a-row",
+	"version": "1.0.0",
+	"description": "",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "echo \"Deleting existing /dist folder\" && del-cli dist && echo \"Compiling scripts via Babel\" && babel . --out-dir dist --source-maps inline --copy-files --ignore node_modules,dist,package-lock.json,package.json && echo \"Starting node server\" && node dist/app.js"
+	},
+	"keywords": [],
+	"author": "Kalle Jillheden",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.16.2"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-preset-babili": "^0.1.4",
+		"babel-preset-es2015": "^6.24.1",
+		"babel-preset-stage-2": "^6.24.1"
+	}
 }
