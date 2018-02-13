@@ -14,4 +14,14 @@ export default class Rect {
 	get yMax() {
 		return this.y + this.height;
 	}
+
+	/**
+	 * @param {Number} x 
+	 * @param {Number} y 
+	 * @returns {Boolean}
+	 */
+	inside(x, y) {
+		return x >= this.x && x <= this.xMax
+			&& y >= this.y && y <= this.yMax;
+	}
 }
