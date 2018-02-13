@@ -1,4 +1,7 @@
 
+import Rect from "./rect";
+// import Game from "./three-in-a-row";
+
 export default class Square {
 	/**
 	 * @param {Number} x 
@@ -12,20 +15,30 @@ export default class Square {
 	}
 
 	/**
-	 * @param {Grid} grid
+	 * @param {Game} game
 	 */
-	draw(grid, rect) {
-		const boxSize = grid.height / grid.size;
-		const left0 = (grid.width - grid.size * boxSize) * 0.5;
-		const left = left0 + boxSize * this.x;
-		const top = boxSize * this.y;
-		const c = grid.canvasContext;
+	calcBoxRect(game) {
+		return new Rect(
+			game.gridRect.x + game.boxWidth * this.x,
+			game.gridRect.y + game.boxHeight * this.y,
+			game.boxWidth,
+			game.boxHeight
+		);
+	}
 
+	/**
+	 * @param {Game} game
+	 */
+	draw(game) {
+		const rect = this.calcBoxRect(game);
+		const c = game.canvasContext;
+
+		c.lineWidth = 1;
 		c.strokeStyle = 'gray';
 		c.beginPath();
-		c.moveTo(left + boxSize, top);
-		c.lineTo(left + boxSize, top + boxSize);
-		c.lineTo(left, top + boxSize);
+		c.moveTo(rect.xMax, rect.y);
+		c.lineTo(rect.xMax, rect.yMax);
+		c.lineTo(rect.x, rect.yMax);
 		c.stroke();
 	}
 }
