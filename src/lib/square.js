@@ -1,7 +1,7 @@
 
 import Rect from "./rect";
 import Game from "./game";
-import "./mathext";
+import MathUtil from "./mathutil";
 export default class Square {
 	/**
 	 * @param {Number} x 
@@ -17,14 +17,23 @@ export default class Square {
 
 	/**
 	 * @param {Game} game
+	 * @param {Number} x
+	 * @param {Number} y
 	 */
-	calcBoxRect(game) {
+	static calcBoxRect(game, x, y) {
 		return new Rect(
-			game.gridRect.x + game.boxWidth * this.x,
-			game.gridRect.y + game.boxHeight * this.y,
+			game.gridRect.x + game.boxWidth * x,
+			game.gridRect.y + game.boxHeight * y,
 			game.boxWidth,
 			game.boxHeight
 		);
+	}
+
+	/**
+	 * @param {Game} game
+	 */
+	calcBoxRect(game) {
+		return Square.calcBoxRect(game, this.x, this.y);
 	}
 
 	/**
@@ -35,7 +44,8 @@ export default class Square {
 		const c = game.canvasContext;
 
 		if (this.player === ' ' && this.hover) {
-
+			c.strokeStyle = "lightgray";
+			Square.drawPlayer(game.turn, game, this.x, this.y, 1);
 		}
 
 		c.lineWidth = 1;
@@ -69,8 +79,21 @@ export default class Square {
 	 */
 	static drawPlayerX(game, x, y, t) {
 		const c = game.canvasContext;
-		game.boxWidth
-		Math.lerp(x, game.boxWidth, t * 0.5);
+		const rect = Square.calcBoxRect(game, x, y);
+		const t1 = t * 2;
+		const t2 = t1 - 1;
+
+		c.lineWidth = 3;
+
+		c.beginPath();
+		c.moveTo(rect.x,rect.y);
+		c.lineTo(MathUtil.lerp(rect.x, rect.xMax,t1), MathUtil.lerp(rect.y, rect.yMax,t1));
+		c.stroke();
+
+		c.beginPath();
+		c.moveTo(rect.x,rect.yMax);
+		c.lineTo(MathUtil.lerp(rect.x, rect.xMax,t2), MathUtil.lerp(rect.yMax, rect.y,t2));
+		c.stroke();
 	}
 
 	/**
@@ -80,6 +103,12 @@ export default class Square {
 	 * @param {Number} t
 	 */
 	static drawPlayerO(game, x, y, t) {
+		const c = game.canvasContext;
+		const rect = Square.calcBoxRect(game, x, y);
 
+		c.lineWidth = 3;
+		c.beginPath();
+		c.arc(rect.xCenter, rect.yCenter, rect.width * 0.5, 0, Math.PI * 2 * t);
+		c.stroke();
 	}
 }

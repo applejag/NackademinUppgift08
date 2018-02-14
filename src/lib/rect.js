@@ -15,6 +15,14 @@ export default class Rect {
 		return this.y + this.height;
 	}
 
+	get xCenter() {
+		return this.x + this.width * 0.5;
+	}
+
+	get yCenter() {
+		return this.y + this.height * 0.5;
+	}
+
 	/**
 	 * @param {Number} x 
 	 * @param {Number} y 
