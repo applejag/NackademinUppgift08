@@ -86,7 +86,7 @@ export default class Square {
 	 */
 	static drawPlayerX(game, x, y, t) {
 		const c = game.canvasContext;
-		const rect = Square.calcBoxRect(game, x, y);
+		const rect = Square.calcBoxRect(game, x, y).expand(-12);
 		const t1 = t * 2;
 		const t2 = t1 - 1;
 
@@ -111,7 +111,7 @@ export default class Square {
 	 */
 	static drawPlayerO(game, x, y, t) {
 		const c = game.canvasContext;
-		const rect = Square.calcBoxRect(game, x, y);
+		const rect = Square.calcBoxRect(game, x, y).expand(-12);
 
 		c.lineWidth = 3;
 		c.beginPath();
