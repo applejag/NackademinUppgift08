@@ -2,6 +2,7 @@
 import Rect from "./rect";
 import Game from "./game";
 import MathUtil from "./mathutil";
+
 export default class Square {
 	/**
 	 * @param {Number} x 
@@ -45,9 +46,17 @@ export default class Square {
 
 		if (this.player === ' ' && this.hover) {
 			c.strokeStyle = "lightgray";
-			Square.drawPlayer(game.turn, game, this.x, this.y, 1);
+			this.drawPlayer(game, game.turn, 1);
+		}
+		else if (this.player !== ' ') {
+			if (this.animation < 1)
+				this.animation += game.deltaTime;
+			
+			c.strokeStyle = this.player === 'X' ? 'firebrick' : 'forestgreen';
+			this.drawPlayer(game);
 		}
 
+		// Draw outline for square
 		c.lineWidth = 1;
 		c.strokeStyle = 'gray';
 		c.beginPath();
@@ -58,17 +67,15 @@ export default class Square {
 	}
 
 	/**
-	 * @param {'X'|'O'|' '} player 
 	 * @param {Game} game
-	 * @param {Number} x 
-	 * @param {Number} y 
+	 * @param {'X'|'O'|' '} player 
 	 * @param {Number} t
 	 */
-	static drawPlayer(player, game, x, y, t) {
+	drawPlayer(game, player = this.player, t = this.animation) {
 		if (player === 'X')
-			Square.drawPlayerX(game, x, y, t);
+			Square.drawPlayerX(game, this.x, this.y, t);
 		else if (player === 'O')
-			Square.drawPlayerO(game, x, y, t);
+			Square.drawPlayerO(game, this.x, this.y, t);
 	}
 
 	/**

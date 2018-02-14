@@ -11,6 +11,9 @@ export default class Game extends Component {
 		this.turn = 'X';
 		this.mouseX = 0;
 		this.mouseY = 0;
+		this.mouseClick = false;
+		this.deltaTime = 0;
+		this.lastUpdate = Date.now();
 
 		setInterval(this.update.bind(this), 1000 / 30);
 		window.addEventListener('mousemove', this.eventMousePosition.bind(this), false);
@@ -71,9 +74,36 @@ export default class Game extends Component {
 	 * @param {MouseEvent} event 
 	 */
 	eventMousePosition(event) {
+		({x:this.mouseX,y:this.mouseY} = this.getMousePosition(event));
+	}
+
+	/**
+	 * @param {MouseEvent} event 
+	 */
+	eventMouseClick(event) {
+		this.mouseClick = true;
+	}
+
+	/**
+	 * @param {MouseEvent} event 
+	 * @returns {{x:Number,y:Number}}
+	 */
+	getMousePosition(event) {
 		var rect = this.canvas.getBoundingClientRect();
-		this.mouseX = event.clientX - rect.left;
-		this.mouseY = event.clientY - rect.top;
+		return {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top,
+		};
+	}
+	
+	/**
+	 * @param {Square} square 
+	 */
+	squareClicked(square) {
+		if (square.player !== ' ') return;
+
+		square.player = this.turn;
+		this.turn = this.turn === 'X' ? 'O' : 'X';
 	}
 
 	update() {
@@ -81,7 +111,13 @@ export default class Game extends Component {
 		const gy = (this.height - this.gridHeight) * 0.5;
 		this.gridRect = new Rect(gx, gy, this.gridWidth, this.gridHeight);
 
+		let now = Date.now();
+		this.deltaTime = (now - this.lastUpdate) * 0.001;
+		
 		this.draw();
+		
+		this.mouseClick = false;
+		this.lastUpdate = now;
 	}
 
 	draw() {
@@ -109,13 +145,21 @@ export default class Game extends Component {
 
 		for (let x = 0; x < this.columns; x++) {
 			for (let y = 0; y < this.columns; y++) {
-				this.grid[x][y].hover = hoverX === x && hoverY === y;
-				this.grid[x][y].draw(this);
+				const square = this.grid[x][y];
+
+				if (hoverX === x && hoverY === y) {
+					square.hover = true;
+					if (this.mouseClick)
+						this.squareClicked(square);
+				} else
+					square.hover = false;
+
+				square.draw(this);
 			}
 		}
 	}
 
 	render() {
-		return <canvas width={this.width} height={this.height} id='canvas'>Get chrome!</canvas>
+		return <canvas width={this.width} height={this.height} id='canvas' onClick={this.eventMouseClick.bind(this)}>Get chrome!</canvas>
 	}
 }
