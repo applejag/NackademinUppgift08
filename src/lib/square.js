@@ -52,7 +52,7 @@ export default class Square {
 			if (this.animation < 1)
 				this.animation += game.deltaTime;
 			
-			c.strokeStyle = this.player === 'X' ? 'firebrick' : 'forestgreen';
+			c.strokeStyle = this.player === 'X' ? 'firebrick' : 'dodgerblue';
 			this.drawPlayer(game);
 		}
 
@@ -72,6 +72,8 @@ export default class Square {
 	 * @param {Number} t
 	 */
 	drawPlayer(game, player = this.player, t = this.animation) {
+		t = MathUtil.easeInOutQuad(0, 1, t);
+
 		if (player === 'X')
 			Square.drawPlayerX(game, this.x, this.y, t);
 		else if (player === 'O')
