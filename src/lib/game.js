@@ -7,7 +7,7 @@ export default class Game extends Component {
 	constructor(props) {
 		super(props);
 
-		this.grid = Game.generateGrid(this.columns);
+		this.grid = Game.generateGrid(this.columns, this.rows);
 		this.turn = 'X';
 		this.mouseX = 0;
 		this.mouseY = 0;
@@ -33,36 +33,37 @@ export default class Game extends Component {
 
 	/** @returns {Number} */
 	get columns() { return this.props.columns || 10; }
-	set columns(value) { this.props.columns = value; }
+
+	/** @returns {Number} */
+	get rows() { return this.props.rows || 10; }
 
 	/** @returns {Number} */
 	get boxWidth() { return this.height * 0.9 / this.columns; }
 	/** @returns {Number} */
-	get boxHeight() { return this.height * 0.9 / this.columns; }
+	get boxHeight() { return this.height * 0.9 / this.rows; }
 
 	/** @returns {Number} */
 	get gridWidth() { return this.columns * this.boxWidth; }
 	/** @returns {Number} */
-	get gridHeight() { return this.columns * this.boxHeight; }
+	get gridHeight() { return this.rows * this.boxHeight; }
 
 	/** @returns {Number} */
 	get width() { return this.props.width || 640; }
-	set width(value) { this.props.width = value; }
 
 	/** @returns {Number} */
 	get height() { return this.props.height || 480; }
-	set height(value) { this.props.height = value; }
 
 	/**
-	 * @param {Number} size 
+	 * @param {Number} columns
+	 * @param {Number} rows
 	 * @returns {Square[][]}
 	 */
-	static generateGrid(size) {
+	static generateGrid(columns, rows) {
 		const grid = [];
 
-		for (let x = 0; x < size; x++) {
+		for (let x = 0; x < columns; x++) {
 			grid.push([]);
-			for (let y = 0; y < size; y++) {
+			for (let y = 0; y < rows; y++) {
 				grid[x].push(new Square(x, y));
 			}
 		}
@@ -103,6 +104,7 @@ export default class Game extends Component {
 		if (square.player !== ' ') return;
 
 		square.player = this.turn;
+		square.animation = 0;
 		this.turn = this.turn === 'X' ? 'O' : 'X';
 	}
 
@@ -144,7 +146,7 @@ export default class Game extends Component {
 		const hoverY = Math.floor((this.mouseY - this.gridRect.y) / this.boxHeight);
 
 		for (let x = 0; x < this.columns; x++) {
-			for (let y = 0; y < this.columns; y++) {
+			for (let y = 0; y < this.rows; y++) {
 				const square = this.grid[x][y];
 
 				if (hoverX === x && hoverY === y) {
