@@ -15,3 +15,25 @@ body {
 	padding: 0;
 	display: block;
 }
+
+.btn {
+	border: 3px solid lightgray;
+	border-radius: 0.5em;
+	background-color: lightgray;
+	font-size: 150%;
+	color: white;
+}
+
+.btn:focus {
+	outline: none;	
+}
+
+.btn:hover, .btn:focus {
+	border: 3px solid rgb(187, 203, 255);
+}
+
+.centered {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}

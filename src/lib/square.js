@@ -114,10 +114,11 @@ export default class Square {
 	static drawPlayerO(game, x, y, t) {
 		const c = game.canvasContext;
 		const rect = Square.calcBoxRect(game, x, y).expand(-12);
+		const radius = Math.min(rect.width, rect.height);
 
 		c.lineWidth = 3;
 		c.beginPath();
-		c.arc(rect.xCenter, rect.yCenter, rect.width * 0.5, 0, Math.PI * 2 * t);
+		c.arc(rect.xCenter, rect.yCenter, radius * 0.5, 0, Math.PI * 2 * t);
 		c.stroke();
 	}
 }

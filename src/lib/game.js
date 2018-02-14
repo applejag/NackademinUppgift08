@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Square from "./square";
 import Rect from "./rect";
+import Winner from "./winner";
 
 export default class Game extends Component {
 
@@ -14,6 +15,8 @@ export default class Game extends Component {
 		this.mouseClick = false;
 		this.deltaTime = 0;
 		this.lastUpdate = Date.now();
+		/** @type {Winner} */
+		this.winner = null;
 
 		setInterval(this.update.bind(this), 1000 / 30);
 		window.addEventListener('mousemove', this.eventMousePosition.bind(this), false);
@@ -52,6 +55,12 @@ export default class Game extends Component {
 
 	/** @returns {Number} */
 	get height() { return this.props.height || 480; }
+	
+	/** @returns {Number} */
+	get winStreak() { return this.props.winStreak || 5;}
+
+	/** @returns {Boolean} */
+	get gameOver() { return !!this.winner; }
 
 	/**
 	 * @param {Number} columns
@@ -85,6 +94,12 @@ export default class Game extends Component {
 		this.mouseClick = true;
 	}
 
+	eventRestartClick(event) {
+		this.grid = Game.generateGrid(this.columns, this.rows);
+		this.winner = null;
+		this.turn = 'X';
+	}
+
 	/**
 	 * @param {MouseEvent} event 
 	 * @returns {{x:Number,y:Number}}
@@ -106,6 +121,37 @@ export default class Game extends Component {
 		square.player = this.turn;
 		square.animation = 0;
 		this.turn = this.turn === 'X' ? 'O' : 'X';
+
+		// Check for win
+		const gameWins = Winner.getWinLines(this.grid, square, this.winStreak);
+
+		if (gameWins.length > 0) {
+			this.winner = new Winner(gameWins);
+			console.log(`${square.player} is the winner!`);
+		}
+		else if (this.countEmptySquares() === 0) {
+			this.winner = new Winner([]);
+			console.log("No winner! Game ends in a draw");
+		}
+	}
+
+	countEmptySquares() {
+		return this.grid.reduce((total1,row) => total1 +
+			row.reduce((total2,square) => total2 + (square.player === ' ' ? 1 : 0), 0)
+		, 0);
+	}
+
+	/**
+	 * @param {Number} x X index of square
+	 * @param {Number} y Y index of square
+	 * @param {Boolean} centered Position relative to `true`:center, `false`:top-left. Default: `false`
+	 * @returns {{x:Number,y:Number}} Position of the square in canvas space.
+	 */
+	transformSquareToGlobal(x, y, centered = false) {
+		return {
+			x: this.gridRect.x + this.boxWidth * (centered ? x + 0.5 : x),
+			y: this.gridRect.y + this.boxHeight * (centered ? y + 0.5 : y),
+		}
 	}
 
 	update() {
@@ -129,6 +175,9 @@ export default class Game extends Component {
 
 		this.drawSquares();
 
+		if (this.winner)
+			this.winner.draw(this);
+
 		const rect = this.gridRect;
 		c.strokeStyle = 'black';
 		c.lineWidth = 2;
@@ -149,7 +198,7 @@ export default class Game extends Component {
 			for (let y = 0; y < this.rows; y++) {
 				const square = this.grid[x][y];
 
-				if (hoverX === x && hoverY === y) {
+				if (!this.gameOver && hoverX === x && hoverY === y) {
 					square.hover = true;
 					if (this.mouseClick)
 						this.squareClicked(square);
@@ -162,6 +211,13 @@ export default class Game extends Component {
 	}
 
 	render() {
-		return <canvas width={this.width} height={this.height} id='canvas' onClick={this.eventMouseClick.bind(this)}>Get chrome!</canvas>
+		return (
+			<div>
+				<canvas width={this.width} height={this.height} id='canvas' onClick={this.eventMouseClick.bind(this)}>
+					Get chrome!
+				</canvas>
+				<button className="btn btn-primary centered" type="button" onClick={this.eventRestartClick.bind(this)}>Restart</button>
+			</div>
+		);
 	}
 }
