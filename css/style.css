@@ -1,0 +1,39 @@
+
+body {
+	background-color: #e2e2e2;
+}
+
+#root {
+	padding: 2em;
+	margin: 2em auto;
+	border: 1px solid lightgray;
+	border-radius: 1em;
+	background-color: white;
+	width: min-content;
+}
+#canvas {
+	padding: 0;
+	display: block;
+}
+
+.btn {
+	border: 3px solid lightgray;
+	border-radius: 0.5em;
+	background-color: lightgray;
+	font-size: 150%;
+	color: white;
+}
+
+.btn:focus {
+	outline: none;	
+}
+
+.btn:hover, .btn:focus {
+	border: 3px solid rgb(187, 203, 255);
+}
+
+.centered {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
